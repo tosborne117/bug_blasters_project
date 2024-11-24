@@ -8,6 +8,6 @@ class OrderStatus(Base):
 
     tracking_num = Column("tracking_num", Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.id"))
-    order_status = Column(String, index=True, nullable=False)
+    order_status = Column(String(100), index=True, nullable=False)
 
     order = relationship("Order", back_populates="orderstatus")
