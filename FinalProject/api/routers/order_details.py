@@ -33,3 +33,18 @@ def update(item_id: int, request: schema.OrderDetailUpdate, db: Session = Depend
 @router.delete("/{item_id}")
 def delete(item_id: int, db: Session = Depends(get_db)):
     return controller.delete(db=db, item_id=item_id)
+
+# PaymentDetail Endpoints (Nested)
+@router.post("/{order_id}/paymentdetails", response_model=schema.PaymentDetail)
+def create_payment(order_id: int, request: schema.PaymentDetailCreate, db: Session = Depends(get_db)):
+    return controller.create_payment(db=db, order_id=order_id, request=request)
+
+
+@router.get("/{order_id}/paymentdetails", response_model=list[schema.PaymentDetail])
+def read_payments(order_id: int, db: Session = Depends(get_db)):
+    return controller.read_payments_by_order(db=db, order_id=order_id)
+
+
+@router.delete("/paymentdetails/{payment_id}")
+def delete_payment(payment_id: int, db: Session = Depends(get_db)):
+    return controller.delete_payment(db=db, payment_id=payment_id)
