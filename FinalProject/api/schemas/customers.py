@@ -13,7 +13,10 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-    pass
+    name: str
+    email: str
+    phone_number: int
+    address: str
 
 
 class CustomerUpdate(BaseModel):
@@ -23,7 +26,7 @@ class CustomerUpdate(BaseModel):
     address: Optional[str] = None
 
 
-class Order(CustomerBase):
+class Customer(CustomerBase):
     id: int
     order_details: list[OrderDetail] = None
 
