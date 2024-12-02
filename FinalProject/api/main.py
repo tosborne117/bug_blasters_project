@@ -10,6 +10,10 @@ app = FastAPI()
 
 origins = ["*"]
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Sandwich Maker API!"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
