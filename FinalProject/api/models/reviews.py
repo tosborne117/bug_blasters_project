@@ -9,7 +9,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     cust_id = Column(Integer, ForeignKey("customers.customer_id"))
-    order_id = Column(Integer, ForeignKey("orders.id"))
+    order_id = Column(Integer, ForeignKey("orders.order_id"))
     rating = Column(Integer, CheckConstraint('rating >= 1 AND rating <= 5'), nullable=False)
     text = Column(String(100))
     date = Column(DATETIME)
