@@ -14,7 +14,7 @@ class OrderStatusUpdate(BaseModel):
 
 class OrderStatus(OrderStatusBase):
     tracking_num: int
-    order_id: Order = None
+    order_id: int
 
     class ConfigDict:
-        from_attributes = True
+        orm_mode = True

@@ -7,18 +7,20 @@ from .order_details import OrderDetail
 
 class OrderBase(BaseModel):
     customer_name: str
-    description: Optional[str]
-    tracking_num: int
-    order_date: Optional[datetime] = None
+    description: str
+    order_date: datetime
+    payment_type: str
 
 
 class OrderCreate(OrderBase):
-    user_id: int
-    payment_id: int
+    customer_id: int
+    tracking_num: int
+    promotion_key: int
 
+'''
 class OrderRead(OrderBase):
     order_id: int
-    user_id: int
+    customer_id: int
     payment_id: int
     customer_name: str
     tracking_num: int
@@ -28,20 +30,21 @@ class OrderRead(OrderBase):
 
     class Config:
         orm_mode = True
-
+'''
 
 class OrderUpdate(BaseModel):
-    customer_name: Optional[str]
-    description: Optional[str]
-    tracking_num: Optional[int]
-    order_date: Optional[datetime]
-    user_id: Optional[int]
-    payment_id: Optional[int]
+    customer_name: Optional[str] = None
+    description: Optional[str] = None
+    payment_type: Optional[str] = None
+    tracking_num: Optional[int] = None
+    order_date: Optional[datetime] = None
+    customer_id: Optional[int] = None
+    promotion_key: Optional[int] = None
 
 
 
 class Order(OrderBase):
-    id: int
+    order_id: int
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
 
