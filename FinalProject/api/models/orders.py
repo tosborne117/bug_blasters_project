@@ -18,7 +18,8 @@ class Order(Base):
     promotion_key = Column(Integer, ForeignKey("promotions.promotion_key"), nullable=False)
 
     order_details = relationship("OrderDetail", back_populates="order")
-    orderstatus = relationship("OrderStatus", back_populates="order")
+    orderstatus = relationship("OrderStatus", back_populates="order", cascade="all, delete-orphan")
     customers = relationship("Customer", back_populates="order")
     promotion = relationship("Promotion", back_populates="order")
+    reviews = relationship("Review", back_populates="order", cascade="all, delete-orphan")
 
