@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from .sandwiches import Sandwich
 
 
+
 class OrderDetailBase(BaseModel):
     amount: int
 
@@ -25,3 +26,19 @@ class OrderDetail(OrderDetailBase):
 
     class ConfigDict:
         from_attributes = True
+
+class PaymentDetailBase(BaseModel):
+    order_id: int
+    amount: float
+    method: str
+
+
+class PaymentDetailCreate(PaymentDetailBase):
+    pass
+
+
+class PaymentDetail(PaymentDetailBase):
+    id: int
+
+    class Config:
+        orm_mode = True
