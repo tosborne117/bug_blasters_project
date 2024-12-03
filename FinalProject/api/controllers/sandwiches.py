@@ -1,18 +1,19 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
 from ..models import sandwiches as model
+from ..models import resources as model
+from ..models import recipes as model
 from sqlalchemy.exc import SQLAlchemyError
-
 
 def create(db: Session, request):
     new_item = model.Sandwich(
-        sandwich_name= request.sandwich_name,
-        price = request.price,
-        calories = request.calories,
-        category = request.category,
-        availability_status = request.availability_status
+        sandwich_name=request.sandwich_name,
+        price=request.price,
+        calories=request.calories,
+        category=request.category,
+        availability_status=request.availability_status
     )
-
 
     try:
         db.add(new_item)
@@ -24,14 +25,25 @@ def create(db: Session, request):
 
     return new_item
 
-
 def read_all(db: Session):
     try:
-        result = db.query(model.Sandwich).all()
+        # result = db.query(model.Sandwich).all()
+        result = []
+        for sandwich in db.query(model.Sandwich).all():
+            result.append({
+                "id": sandwich.id,
+                "sandwich_name": sandwich.sandwich_name,
+                "price": sandwich.price,
+                "category": sandwich.category,
+                "calories": sandwich.calories,
+                "availability_status": sandwich.availability_status
+            })
+        return result
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
+
+
 
 
 def read_one(db: Session, item_id):

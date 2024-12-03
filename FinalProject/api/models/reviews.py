@@ -14,6 +14,8 @@ class Review(Base):
     text = Column(String(100))
     date = Column(DATETIME)
 
+    order = relationship("Order", back_populates="review")
+
     # __table_args__ = (
     #     CheckConstraint('rating >= 1 AND rating <= 5', name='check_rating')
     # )

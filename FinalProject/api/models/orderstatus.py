@@ -10,4 +10,4 @@ class OrderStatus(Base):
     order_id = Column(Integer, ForeignKey("orders.order_id"))
     order_status = Column(String(100), index=True, nullable=False)
 
-    order = relationship("Order", back_populates="orderstatus")
+    #order = relationship("Order", back_populates="orderstatus", foreign_keys=[order_id])
