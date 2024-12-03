@@ -26,16 +26,15 @@ def create(db: Session, request):
 
 def read_all(db: Session):
     try:
-        result = db.query(model.Customer).all()
+        result = db.query(model.Customers).all()
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
     return result
 
-
 def read_one(db: Session, customer_id):
     try:
-        item = db.query(model.Customers).filter(model.Customers.id == customer_id).first()
+        item = db.query(model.Customers).filter(model.Customers.customer_id == customer_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -46,7 +45,7 @@ def read_one(db: Session, customer_id):
 
 def update(db: Session, customer_id, request):
     try:
-        item = db.query(model.Customers).filter(model.Customers.id == customer_id)
+        item = db.query(model.Customers).filter(model.Customers.customer_id == customer_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         update_data = request.dict(exclude_unset=True)
@@ -60,7 +59,7 @@ def update(db: Session, customer_id, request):
 
 def delete(db: Session, customer_id):
     try:
-        item = db.query(model.Customers).filter(model.Customers.id == customer_id)
+        item = db.query(model.Customers).filter(model.Customers.customer_id == customer_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)

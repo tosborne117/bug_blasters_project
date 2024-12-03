@@ -7,10 +7,15 @@ from sqlalchemy.exc import SQLAlchemyError
 def create(db: Session, request):
     new_item = model.Resource(
         item = request.item,
-        amount = request.amount
+        amount = request.amount,
+        calories = request.calories
     )
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+    return new_item
 
-
+'''
     try:
         db.add(new_item)
         db.commit()
@@ -20,7 +25,7 @@ def create(db: Session, request):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
 
     return new_item
-
+'''
 
 def read_all(db: Session):
     try:

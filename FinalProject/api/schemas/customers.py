@@ -3,8 +3,6 @@ from typing import Optional
 from pydantic import BaseModel
 from .order_details import OrderDetail
 
-
-
 class CustomerBase(BaseModel):
     name: str
     email: str
@@ -13,10 +11,7 @@ class CustomerBase(BaseModel):
 
 
 class CustomerCreate(CustomerBase):
-    name: str
-    email: str
-    phone_number: int
-    address: str
+    pass
 
 
 class CustomerUpdate(BaseModel):
@@ -27,8 +22,8 @@ class CustomerUpdate(BaseModel):
 
 
 class Customer(CustomerBase):
-    id: int
-    order_details: list[OrderDetail] = None
+    customer_id: int
+    orders: Optional[list] = None
 
     class ConfigDict:
         from_attributes = True
