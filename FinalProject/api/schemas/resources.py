@@ -21,4 +21,4 @@ class Resource(ResourceBase):
     id: int
 
     class ConfigDict:
-        from_attributes = True
+        orm_mode = True
