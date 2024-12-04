@@ -8,7 +8,7 @@ def create(db: Session, request):
     new_item = model.Order(
         customer_name=request.customer_name,
         description=request.description,
-        payment_id=request.payment_id,
+        payment_type=request.payment_type,
         tracking_num=request.tracking_num
     )
 
