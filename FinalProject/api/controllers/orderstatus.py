@@ -1,70 +1,79 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status, Response, Depends
-from ..models import orderstatus as model
+from ..models import orderstatus as status_model
+from ..models import orders as order_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def create(db: Session, request):
-    new_item = model.OrderStatus(
-    tracking_num = request.tracking_num,
-    order_id  = request.order_id,
-    order_status = request.order_status
-    )
-
-
+def create(db: Session, order_id: int, status: str):
     try:
-        db.add(new_item)
+        order = db.query(order_model.Order).filter(order_model.Order.order_id == order_id).first()
+        if not order:
+            raise HTTPException(status_code=404, detail="Order wasn't fount")
+
+        new_status = status_model.OrderStatus(
+        order_id  = order_id,
+        order_status = status
+        )
+
+        db.add(new_status)
         db.commit()
-        db.refresh(new_item)
+        db.refresh(new_status)
+        return {"order_id": order_id, "status": new_status.order_status}
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-
-    return new_item
-
 
 def read_all(db: Session):
     try:
-        result = db.query(model.OrderStatus).all()
+        all_status = db.query(status_model.OrderStatus).all()
+        result = []
+
+        for status in all_status:
+            result.append({
+                "tracking_num": status.tracking_num,
+                "order_id": status.order_id,
+                "status": status.order_status
+            })
+        return result
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return result
 
-
-def read_one(db: Session, item_id):
+def read_one(db: Session, order_id: int):
     try:
-        item = db.query(model.OrderStatus).filter(model.OrderStatus.order_id == item_id).first()
-        if not item:
+        status = db.query(status_model.OrderStatus).filter(status_model.OrderStatus.order_id == order_id).first()
+        if not status:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
+        return {"order_id": status.order_id, "status": status.order_status}
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item
 
 
-def update(db: Session, item_id, request):
+def update(db: Session, order_id: int, new_status: str):
     try:
-        item = db.query(model.OrderStatus).filter(model.OrderStatus.order_id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        update_data = request.dict(exclude_unset=True)
-        item.update(update_data, synchronize_session=False)
+        status = db.query(status_model.OrderStatus).filter(status_model.OrderStatus.order_id == order_id).first()
+        if not status:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Status wasn't found!")
+
+        status.order_status = new_status
         db.commit()
+        db.refresh(status)
+        return {"order_id": status.order_id, "updated_status": status.order_status}
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return item.first()
 
 
-def delete(db: Session, item_id):
+def delete(db: Session, order_id: int):
     try:
-        item = db.query(model.OrderStatus).filter(model.OrderStatus.order_id == item_id)
-        if not item.first():
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        item.delete(synchronize_session=False)
+        status = db.query(status_model.OrderStatus).filter(status_model.OrderStatus.order_id == order_id).first()
+        if not status:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="stauts was not found!")
+        db.delete(status)
         db.commit()
+        return {"message": f"Status for order {order_id} deleted successfully"}
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)

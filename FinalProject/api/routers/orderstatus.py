@@ -11,8 +11,8 @@ router = APIRouter(
 
 
 @router.post("/", response_model=schema.OrderStatus)
-def create(request: schema.OrderStatusCreate, db: Session = Depends(get_db)):
-    return controller.create(db=db, request=request)
+def create(order_id: int, status: str, db: Session = Depends(get_db)):
+    return controller.create(db=db, order_id=order_id, status=status)
 
 
 @router.get("/", response_model=list[schema.OrderStatus])

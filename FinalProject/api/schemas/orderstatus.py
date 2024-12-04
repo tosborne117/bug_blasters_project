@@ -1,6 +1,7 @@
+from __future__ import annotations
 from typing import Optional
 from pydantic import BaseModel
-from .orders import Order
+
 
 class  OrderStatusBase(BaseModel):
     order_status: str
@@ -16,5 +17,6 @@ class OrderStatus(OrderStatusBase):
     tracking_num: int
     order_id: int
 
-    class ConfigDict:
+    class Config:
         orm_mode = True
+
