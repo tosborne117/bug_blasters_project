@@ -8,6 +8,7 @@ def create(db: Session, request):
     new_item = model.Review(
     cust_id= request.cust_id,
     order_id = request.order_id,
+    rating = request.int,
     text = request.text
     )
 
