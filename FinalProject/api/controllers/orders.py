@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as order_model
-from ..models import orderstatus as status_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -36,7 +35,7 @@ def create(db: Session, request):
 
 def read_all(db: Session):
     try:
-        orders = db.query(order_model.Order).options(joinedload(order_model.Order.orderstatus)).all()
+        orders = db.query(order_model.Order).all()
         result = []
         for order in orders:
             result.append({
@@ -57,7 +56,6 @@ def read_all(db: Session):
 def read_one(db: Session, order_id: int):
     try:
         order = db.query(order_model.Order).all()
-        #order = db.query(order_model.Order).options(joinedload(order_model.Order.orderstatus)).filter(order_model.Order.order_id == order_id).first()
         if not order:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         return {
