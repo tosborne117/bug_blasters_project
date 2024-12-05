@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status, Response, Depends
 from ..models import orders as order_model
-from ..models import orderstatus as status_model
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -13,20 +12,12 @@ def create(db: Session, request):
         description=request.description,
         order_date=request.order_date,
         payment_type=request.payment_type,
-        promotion_key=request.promotion_key
+        promotion_key=request.promotion_key,
+        order_status=request.order_status
     )
 
     try:
         db.add(new_order)
-        db.commit()
-        db.refresh(new_order)
-
-        #default initial status
-        new_status = status_model.OrderStatus(
-            order_id=new_order.order_id,
-            order_status="Received"
-        )
-        db.add(new_status)
         db.commit()
         db.refresh(new_order)
         return{
@@ -36,12 +27,7 @@ def create(db: Session, request):
             "description": new_order.description,
             "payment_type": new_order.payment_type,
             "promotion_key": new_order.promotion_key,
-            #"status": new_status.order_status
-            "status": {
-                "tracking_num": new_status.tracking_num,
-                "order_id": new_status.order_id,
-                "order_status": new_status.order_status,
-            },
+            "order_status": new_order.order_status
         }
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
@@ -49,7 +35,7 @@ def create(db: Session, request):
 
 def read_all(db: Session):
     try:
-        orders = db.query(order_model.Order).options(joinedload(order_model.Order.orderstatus)).all()
+        orders = db.query(order_model.Order).all()
         result = []
         for order in orders:
             result.append({
@@ -59,12 +45,7 @@ def read_all(db: Session):
                 "description": order.description,
                 "payment_type": order.payment_type,
                 "promotion_key": order.promotion_key,
-                #"status": order.orderstatus.order_status if order.orderstatus else "No status"
-                "status": {
-                    "tracking_num": order.orderstatus.tracking_num,
-                    "order_id": order.orderstatus.order_id,
-                    "order_status": order.orderstatus.order_status,
-                } if order.orderstatus else None,
+                "order_status": order.order_status
             })
         return result
     except SQLAlchemyError as e:
@@ -74,22 +55,17 @@ def read_all(db: Session):
 
 def read_one(db: Session, order_id: int):
     try:
-        order = db.query(order_model.Order).options(joinedload(order_model.Order.orderstatus)).filter(order_model.Order.order_id == order_id).first()
+        order = db.query(order_model.Order).all()
         if not order:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         return {
             "order_id": order.order_id,
-            "customer_name": order.customer_name,
-            "order_date": order.order_date,
-            "description": order.description,
-            "payment_type": order.payment_type,
-            "promotion_key": order.promotion_key,
-            #"status": order.orderstatus.order_status if order.orderstatus else "No status"
-            "status": {
-                "tracking_num": order.orderstatus.tracking_num,
-                "order_id": order.orderstatus.order_id,
-                "order_status": order.orderstatus.order_status,
-            } if order.orderstatus else None,
+                "customer_name": order.customer_name,
+                "order_date": order.order_date,
+                "description": order.description,
+                "payment_type": order.payment_type,
+                "promotion_key": order.promotion_key,
+                "order_status": order.order_status
         }
     except SQLAlchemyError as e:
         error = str(e.__dict__['orig'])
@@ -112,7 +88,7 @@ def update(db: Session, order_id: int, request):
 
 def delete(db: Session, order_id: int):
     try:
-        order = db.query(order_model.Order).options(joinedload(order_model.Order.orderstatus)).filter(order_model.Order.order_id == order_id).first()
+        order = db.query(order_model.Order).filter(order_model.Order.order_id == order_id).first()
         if not order:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         db.delete(order)
