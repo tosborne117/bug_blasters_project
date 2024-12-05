@@ -13,8 +13,8 @@ class Order(Base):
     order_date = Column(DATETIME, nullable=False, server_default=func.now())
     description = Column(String(300))
     payment_type = Column(String(200), nullable=False)
-    #tracking_num = Column(Integer, ForeignKey("orderstatus.tracking_num"), nullable=False)
     promotion_key = Column(Integer, ForeignKey("promotions.promotion_key"), nullable=True)
+    order_status = Column(String(100), nullable=False)
 
     order_details = relationship("OrderDetail", back_populates="order")
     orderstatus = relationship("OrderStatus", back_populates="order", uselist=False, lazy="joined", cascade="all, delete")
