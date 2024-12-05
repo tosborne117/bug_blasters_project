@@ -10,6 +10,7 @@ class OrderBase(BaseModel):
     description: str
     order_date: datetime
     payment_type: str
+    order_status: str
 
 
 class OrderCreate(OrderBase):
@@ -23,6 +24,7 @@ class OrderUpdate(BaseModel):
     order_date: Optional[datetime] = None
     customer_id: Optional[int] = None
     promotion_key: Optional[int] = None
+    order_status: Optional[str] = None
 
 
 
