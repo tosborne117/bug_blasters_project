@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 from .order_details import OrderDetail
-from .orderstatus import OrderStatusBase
 
 
 class OrderBase(BaseModel):
@@ -48,7 +47,6 @@ class Order(OrderBase):
     order_id: int
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
-    status: Optional[OrderStatusBase] = None
 
     class Config:
         orm_mode = True
