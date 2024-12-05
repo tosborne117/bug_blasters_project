@@ -77,7 +77,7 @@ def create_payment(db: Session, order_id: int, request: schema.PaymentDetailCrea
     order = db.query(OrderDetail).filter(OrderDetail.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    new_payment = PaymentDetail(order_id=order_id, **request.model_dump())
+    new_payment = PaymentDetail(order_id=order_id, **request.dict())
     db.add(new_payment)
     db.commit()
     db.refresh(new_payment)

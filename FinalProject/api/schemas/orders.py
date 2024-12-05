@@ -1,8 +1,9 @@
+from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 from .order_details import OrderDetail
-
+from .orderstatus import OrderStatusBase
 
 
 class OrderBase(BaseModel):
@@ -14,7 +15,7 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     customer_id: int
-    tracking_num: int
+    #tracking_num: int
     promotion_key: int
 
 '''
@@ -36,7 +37,7 @@ class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
     description: Optional[str] = None
     payment_type: Optional[str] = None
-    tracking_num: Optional[int] = None
+    #tracking_num: Optional[int] = None
     order_date: Optional[datetime] = None
     customer_id: Optional[int] = None
     promotion_key: Optional[int] = None
@@ -47,6 +48,8 @@ class Order(OrderBase):
     order_id: int
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
+    status: Optional[OrderStatusBase] = None
 
-    class ConfigDict:
-        from_attributes = True
+    class Config:
+        orm_mode = True
+
