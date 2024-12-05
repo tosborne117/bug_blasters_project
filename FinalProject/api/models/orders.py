@@ -17,7 +17,6 @@ class Order(Base):
     order_status = Column(String(100), nullable=False)
 
     order_details = relationship("OrderDetail", back_populates="order")
-    orderstatus = relationship("OrderStatus", back_populates="order", uselist=False, lazy="joined", cascade="all, delete")
     customers = relationship("Customers", back_populates="orders")
     promotion = relationship("Promotions", back_populates="order")
     review = relationship("Review", back_populates="order")

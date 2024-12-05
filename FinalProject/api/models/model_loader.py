@@ -13,5 +13,4 @@ def index():
     reviews.Base.metadata.create_all(engine)
     customers.Base.metadata.create_all(engine)
     promotions.Base.metadata.create_all(engine)
-    orderstatus.Base.metadata.create_all(engine)
 
